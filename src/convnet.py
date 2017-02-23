@@ -4,6 +4,8 @@ import activations as act
 import sys
 sys.path.append('../')
 import config
+from fwd import convFwd,poolFwd
+
 inp_width = config.width
 inp_height = config.height
 inp_channels = config.channels
@@ -15,36 +17,6 @@ maxW = config.maxW
 
 initBias = config.initBias
 activation = config.activation
-pool = config.pool
-
-def convFwd(X, convFilters, bias):
-
-    featureMaps = []
-    for i in range(len(convFilters)):
-        featureMap = []
-        convFilter = convFilters[i]
-        depth = len(convFilter)
-        assert(depth == len(X)), 'Dimension Mismatch'
-        for j in range(depth):
-            featureMap.append(signal.convolve2d(X[j], convFilter[j],'valid'))
-        featureMap = sum(np.asarray(featureMap)) + bias[i]
-
-        featureMaps.append(act.activation(featureMap,'relu'))
-    return np.asarray(featureMaps)
-
-def poolFwd(X, kernel, stride):
-    assert( kernel == 2 ), 'Only Size 2 Kernel Supported Currently'
-    assert( stride == 2 ), 'Only Size 2 Stride Supported Currently'
-    postPool = []
-    for i in range(len(X)):
-        pre = X[i].reshape(X[i].shape[0]/2,2,X[i].shape[1]/2,2)
-        if pool == 'max':
-            postPool.append(pre.max(axis=(1,3)))
-        elif pool == 'mean':
-            postPool.append(pre.mean(axis=(1,3)))
-        else :
-            assert(1==2),'Invalid Pool option'
-    return np.asarray(postPool)
 
 class cnn:
     def __init__(self):
@@ -80,9 +52,7 @@ class cnn:
         poolParams = self.poolParams
 
         # layer0 = input Layer
-        X = np.asarray(inputData)
-        # layer0 = X.reshape(X.size**0.5,X.size**0.5)
-        layer0 = X
+        layer0 = np.asarray(inputData)
 
         # layer1 = conv1 layer
         layer1 = convFwd(np.asarray([layer0]),weights[0] , biases[0])
@@ -100,10 +70,10 @@ class cnn:
         layer5 = convFwd( layer4,weights[2] ,biases[2] )
 
         # layer6 = fc2 layer
-        layer6 = act.activation(np.dot(weights[3],layer5[:,0])+biases[3] , 'relu')
+        layer6 = act.activation(np.dot(weights[3],layer5[:,0])+biases[3] , activation )
 
         #layer7 = softmax layer
-        layer7_in = act.activation(np.dot( weights[4], layer6[:,0] )+biases[4] , 'relu')
+        layer7_in = act.activation(np.dot( weights[4], layer6[:,0] )+biases[4] , activation)
         layer7 = np.exp(layer7_in)/sum(np.exp(layer7_in))
         return layer7
 
