@@ -1,8 +1,9 @@
 import numpy as np
-import config
 from scipy import signal
 import activations as act
-
+import sys
+sys.path.append('../')
+import config
 inp_width = config.width
 inp_height = config.height
 inp_channels = config.channels
