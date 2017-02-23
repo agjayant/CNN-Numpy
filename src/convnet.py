@@ -4,7 +4,7 @@ import activations as act
 import sys
 sys.path.append('../')
 import config
-from fwd import convFwd,poolFwd
+from fwd import convFwd,poolFwd,convpool
 
 inp_width = config.width
 inp_height = config.height
@@ -55,24 +55,20 @@ class cnn:
         layer0 = np.asarray(inputData)
 
         # layer1 = conv1 layer
-        layer1 = convFwd(np.asarray([layer0]),weights[0] , biases[0])
-
-        #layer2 = pool1 layer
-        layer2 = poolFwd(layer1, poolParams[0][0], poolParams[0][1])
+        # layer2 = pool1 layer
+        layer2 = convpool(np.asarray([layer0]),weights[0],biases[0], poolParams[0][0], poolParams[0][1])
 
         # layer3 = conv2 layer
-        layer3 = convFwd(layer2,weights[1], biases[1] )
+        # layer4 = pool2 layer
+        layer4 = convpool(layer2,weights[1],biases[1], poolParams[1][0], poolParams[1][1])
 
-        #layer4 = pool2 layer
-        layer4 = poolFwd(layer3, poolParams[1][0], poolParams[1][1])
-
-         # layer5 = fc1 layer
+        # layer5 = fc1 layer
         layer5 = convFwd( layer4,weights[2] ,biases[2] )
 
         # layer6 = fc2 layer
         layer6 = act.activation(np.dot(weights[3],layer5[:,0])+biases[3] , activation )
 
-        #layer7 = softmax layer
+        # layer7 = softmax layer
         layer7_in = act.activation(np.dot( weights[4], layer6[:,0] )+biases[4] , activation)
         layer7 = np.exp(layer7_in)/sum(np.exp(layer7_in))
         return layer7
