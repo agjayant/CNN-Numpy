@@ -50,7 +50,7 @@ def convpool(X, convFilters, bias, kernel, stride):
         assert(depth == len(X)), 'Dimension Mismatch'
         for j in range(depth):
             featureMap.append(signal.convolve2d(X[j], convFilter[j],'valid'))
-        featureMap = np.asarray(act.activation(sum(featureMap) + bias[i],activation))
+        featureMap = act.activation(sum(featureMap) + bias[i],activation)
 
         pre = featureMap.reshape(featureMap.shape[0]/2,2,featureMap.shape[1]/2,2)
         if pool == 'max':

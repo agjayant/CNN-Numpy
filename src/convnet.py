@@ -45,6 +45,9 @@ class cnn:
         self.Weights.append(np.random.uniform(minW,maxW,size=(layers[6][1],layers[5][1])))
         self.Biases.append(initBias*np.ones(layers[6][1]))
 
+        self.Weights = np.asarray(self.Weights)
+        self.Biases = np.asarray(self.Biases)
+
     def forward(self, inputData):
 
         weights = self.Weights
