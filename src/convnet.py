@@ -23,21 +23,21 @@ class cnn:
 
         self.Weights = [np.random.uniform(minW,maxW,size=(layers[0][1],inp_channels,layers[0][2],layers[0][2]))]
         out_Size =  inp_width - layers[0][2] + 1 ########### Only for Height = Width
-        self.Biases = [initBias*np.ones((layers[0][1], out_Size,out_Size))]
+        self.Biases = [initBias*np.ones( layers[0][1] )]
 
         self.poolParams = [(layers[1][1], layers[1][2])]
         out_Size = out_Size/2  ########## Only for Kernel = 2 and Stride = 2
 
         self.Weights.append(np.random.uniform(minW,maxW,size=(layers[2][1],layers[0][1],layers[2][2],layers[2][2])))
         out_Size = out_Size - layers[2][2]+1
-        self.Biases.append(initBias*np.ones((layers[2][1], out_Size,out_Size)))
+        self.Biases.append(initBias*np.ones(layers[2][1]))
 
         self.poolParams.append((layers[3][1],layers[3][2]))
         out_Size = out_Size/2  ########## Only for Kernel = 2 and Stride = 2
 
         self.Weights.append(np.random.uniform(minW,maxW,size=(layers[4][1],layers[2][1],out_Size,out_Size)))
         out_Size = 1
-        self.Biases.append(initBias*np.ones((layers[4][1],out_Size,out_Size)))
+        self.Biases.append(initBias*np.ones(layers[4][1]))
 
         self.Weights.append(np.random.uniform(minW,maxW,size=(layers[5][1],layers[4][1])))
         self.Biases.append(initBias*np.ones(layers[5][1]))
