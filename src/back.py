@@ -46,6 +46,14 @@ def convBack(X, dy, W):
 
     return [dX, dW, dB]
 
+def fcback(X, dy, W):
+
+    dX = np.dot( dy.transpose(), W )
+    dW = np.dot( dy, X.transpose() )
+    dB = dy
+
+    return [ dX, dW, dB ]
+
 # def convBack(X, dy, W):
 
     ## Compute dx
