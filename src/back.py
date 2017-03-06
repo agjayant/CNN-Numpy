@@ -54,6 +54,21 @@ def fcback(X, dy, W):
 
     return [ dX, dW, dB ]
 
+def poolback(X, dy):
+
+    ## To Improve
+    dX = np.zeros(X.shape)
+
+    for k in range(X.shape[0]):
+        for i in range(0,X.shape[1],2):
+            for j in range(0,X.shape[2],2):
+                a =  X[k,i:i+2,j:j+2]
+                ind = np.unravel_index(a.argmax(), a.shape)
+                dX[i+ind[0],j+ind[1]] = dy[i/2,j/2]
+
+    return dX
+
+
 # def convBack(X, dy, W):
 
     ## Compute dx
