@@ -1,5 +1,5 @@
 *.pyc
 .ipynb_checkpoints
-data/*
+/*data/**/
 src/*pyc
-debug.ipynb
+/*debug.ipynb*/
