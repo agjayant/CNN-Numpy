@@ -11,7 +11,8 @@ def activation(x, func):
     else :
         assert(0 == 1), 'Invalid Activation Function'
 
-def backActivate(error, inUnits, outUnits,  func):
+# def backActivate(error, inUnits, outUnits,  func):
+def backActivate(error, inUnits,  func):
 
     if func == 'relu':
 
@@ -21,13 +22,13 @@ def backActivate(error, inUnits, outUnits,  func):
         ReLU = np.vectorize(ReLU)
 
         return error*ReLU(inUnits)
-    elif func == 'tanh':
+    # elif func == 'tanh':
 
-        def tanh(y):
-            return 1-y*y
-        tanh = np.vectorize(tanh)
+        # def tanh(y):
+            # return 1-y*y
+        # tanh = np.vectorize(tanh)
 
-        return error*tanh(outUnits)
+        # return error*tanh(outUnits)
     else :
         assert(0 == 1), 'Invalid Activation Function'
 

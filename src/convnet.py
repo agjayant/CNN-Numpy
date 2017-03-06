@@ -4,7 +4,8 @@ import activations as act
 import sys
 sys.path.append('../')
 import config
-from fwd import convFwd,poolFwd,convpool
+from fwd import *
+from back import *
 
 inp_width = config.width
 inp_height = config.height
@@ -17,6 +18,7 @@ maxW = config.maxW
 
 initBias = config.initBias
 activation = config.activation
+lr = config.lr
 
 class cnn:
     def __init__(self):
@@ -58,22 +60,27 @@ class cnn:
         layer0 = np.asarray(inputData)
 
         # layer1 = conv1 layer
+        layer1 = convFwd(np.asarray([layer0]),weights[0],biases[0])
         # layer2 = pool1 layer
-        layer2 = convpool(np.asarray([layer0]),weights[0],biases[0], poolParams[0][0], poolParams[0][1])
+        layer2 = poolFwd(layer1, poolParams[0][0], poolParams[0][1])
+        # layer2 = convpool(np.asarray([layer0]),weights[0],biases[0], poolParams[0][0], poolParams[0][1])
 
         # layer3 = conv2 layer
+        layer3 = convFwd(layer2,weights[1],biases[1])
         # layer4 = pool2 layer
-        layer4 = convpool(layer2,weights[1],biases[1], poolParams[1][0], poolParams[1][1])
+        layer4 = poolFwd(layer3, poolParams[1][0], poolParams[1][1])
+        # layer4 = convpool(layer2,weights[1],biases[1], poolParams[1][0], poolParams[1][1])
 
         # layer5 = fc1 layer
         layer5 = convFwd( layer4,weights[2] ,biases[2] )
 
         # layer6 = fc2 layer
-        layer6 = act.activation(np.dot(weights[3],layer5[:,0])+biases[3] , activation )
+        layer6 = act.activation(np.dot(weights[3],layer5[:,0]).transpose() + biases[3] , activation ).transpose()
 
         # layer7 = softmax layer
-        layer7_in = act.activation(np.dot( weights[4], layer6[:,0] )+biases[4] , activation)
-        layer7 = np.exp(layer7_in)/sum(np.exp(layer7_in))
+        layer7 = np.dot( weights[4], layer6[:,0] ).transpose() + biases[4]
+        layer7 -= np.max(layer7)
+        layer7 = np.exp(layer7)/sum(np.exp(layer7))
         return layer7
 
     def predict(self, inputVal):
@@ -81,6 +88,117 @@ class cnn:
         outProb = self.forward(inputVal)
         return outProb.argmax()
 
+
+    def backward(self, trainData, trainLabel ):
+
+        assert( len(trainData) == len(trainLabel)), 'Equal to Batch Size'
+
+        batchSize = len(trainData)
+
+        weights = self.Weights
+        biases = self.Biases
+        poolParams = self.poolParams
+
+        dWeights = np.zeros(weights.shape)
+        dBiases = np.zeros(biases.shape)
+        # dW4 = np.zeros(weights[4].shape)
+        # dB4 = np.zeros(biases[4].shape)
+
+        # dW3 = np.zeros(weights[3].shape)
+        # dB3 = np.zeros(biases[3].shape)
+
+        # dW2 = np.zeros(weights[2].shape)
+        # dB2 = np.zeros(biases[2].shape)
+
+        # dW1 = np.zeros(weights[1].shape)
+        # dB1 = np.zeros(biases[1].shape)
+
+        # dW0 = np.zeros(weights[0].shape)
+        # dB0 = np.zeros(biases[0].shape)
+
+        loss = 0
+
+        for image in range(batchSize):
+
+            X_data = trainData[image]
+            X_label = trainLabel[image]
+
+            ###Forward Pass
+            # layer0 = input Layer
+            layer0 = np.asarray(X_data)
+
+            # layer1 = conv1 layer
+            layer1 = convFwd(np.asarray([layer0]),weights[0],biases[0])
+
+            # layer2 = pool1 layer
+            layer2 = poolFwd(layer1, poolParams[0][0], poolParams[0][1])
+
+            # layer3 = conv2 layer
+            layer3 = convFwd(layer2,weights[1],biases[1])
+
+            # layer4 = pool2 layer
+            layer4 = poolFwd(layer3, poolParams[1][0], poolParams[1][1])
+
+            # layer5 = fc1 layer
+            layer5 = convFwd( layer4,weights[2] ,biases[2] )
+
+            # layer6 = fc2 layer
+            layer6 = act.activation(np.dot(weights[3],layer5[:,0]).transpose() + biases[3] , activation ).transpose()
+
+            # layer7 = softmax layer
+            layer7 = np.dot( weights[4], layer6[:,0] ).transpose() + biases[4]
+            layer7 -= np.max(layer7)
+            layer7 = np.exp(layer7)/sum(np.exp(layer7))
+
+            loss += -1*sum( X_label * np.log(layer7) )
+
+            ### Gradients Accumulate
+            dy = X_label - layer7
+
+            [dy, dW, dB ] = fcback(layer6, np.asarray([dy]).transpose() , weights[4])
+            dWeights[4] += dW
+            dBiases[4] += dB.flatten()
+            dy = act.backActivate(dy.transpose(), layer6, activation)
+
+            [dy, dW, dB ] = fcback(layer5[:,0], dy, weights[3])
+            dWeights[3] += dW
+            dBiases[3] += dB.flatten()
+            dy = act.backActivate(dy.transpose(), layer5[:,0], activation)
+
+            [dy, dW, dB ] = convBack(layer4, dy, weights[2])
+            dWeights[2] += dW
+            dBiases[2] += dB.flatten()
+
+            dy = poolback(layer3, dy)
+            dy = act.backActivate(dy, layer3, activation)
+
+            [dy, dW, dB ] = convBack(layer2, dy, weights[1])
+            dWeights[1] += dW
+            dBiases[1] += dB.flatten()
+
+            dy = poolback(layer1, dy)
+            dy = act.backActivate(dy, layer1, activation)
+
+            [dy, dW, dB ] = convBack(np.asarray([layer0]), dy, weights[0])
+            dWeights[0] += dW
+            dBiases[0] += dB.flatten()
+
+        # Updates
+        # weights[0] -= lr*dW0/batchSize
+        # weights[1] -= lr*dW1/batchSize
+        # weights[2] -= lr*dW2/batchSize
+        # weights[3] -= lr*dW3/batchSize
+        # weights[4] -= lr*dW4/batchSize
+
+        # biases[0] -= lr*dB0/batchSize
+        # biases[1] -= lr*dB1/batchSize
+        # biases[2] -= lr*dB2/batchSize
+        # biases[3] -= lr*dB3/batchSize
+        # biases[4] -= lr*dB4/batchSize
+        self.Weights -= lr*dWeights/batchSize
+        self.Biases -= lr*dBiases/batch
+
+        return loss/batchSize
 
 
 

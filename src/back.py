@@ -25,7 +25,10 @@ def convBack(X, dy, W):
 
     ### Compute dx, dW , dB
 
-    dy = np.pad(dy, W.shape[2]-1 ,'constant' )[1:-1]
+    if dy.shape[1] == 1:
+        temp = dy
+        dy = np.zeros((dy.shape[0],1,1))
+        dy[:,0] = temp
 
     Wb = np.zeros((W.shape[1],W.shape[0],W.shape[2],W.shape[3]))
     dW = []
@@ -37,7 +40,10 @@ def convBack(X, dy, W):
             kernel.append( signal.convolve2d(X[j], dy[i],'valid') )
             Wb[j,i] = np.rot90(W[i,j],2)
         dW.append(np.asarray(kernel))
-        dB.append(sum(dy[i]))
+        dB.append(np.sum(dy[i]))
+
+    pad = W.shape[2]-1
+    dy = np.pad(dy, pad ,'constant' )[pad:-1*pad]
 
     dX = conv(dy, Wb)
 
@@ -49,7 +55,7 @@ def convBack(X, dy, W):
 def fcback(X, dy, W):
 
     dX = np.dot( dy.transpose(), W )
-    dW = np.dot( dy, X.transpose() )
+    dW = np.dot( dy , X.transpose() )
     dB = dy
 
     return [ dX, dW, dB ]
@@ -64,10 +70,9 @@ def poolback(X, dy):
             for j in range(0,X.shape[2],2):
                 a =  X[k,i:i+2,j:j+2]
                 ind = np.unravel_index(a.argmax(), a.shape)
-                dX[i+ind[0],j+ind[1]] = dy[i/2,j/2]
+                dX[k,i+ind[0],j+ind[1]] = dy[k,i/2,j/2]
 
     return dX
-
 
 # def convBack(X, dy, W):
 
