@@ -3,9 +3,9 @@ import scipy.io as scio
 
 mnist = scio.loadmat('mnist_big.mat')
 
-inp = mnist['X_train'][1:60000]/255.0
+inp = mnist['X_train']/255.0
 
-test = mnist['X_test'][1:10000]/255.0
+test = mnist['X_test']/255.0
 
 inpD = []
 for item in inp:
