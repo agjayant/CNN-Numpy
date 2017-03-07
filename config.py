@@ -24,5 +24,5 @@ initBias = 0.01   # Initial Bias Value for all layers
 
 lr = 0.001
 numEpoch = 5
-batchSize = 50
-
+batchSize = 5
+trainExamples = 20
