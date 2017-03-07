@@ -183,6 +183,8 @@ class cnn:
             dW0 += dW
             dB0 += dB.flatten()
 
+        # print np.sum(dW0)
+        # print np.sum(dW1)
         # Updates
         weights[0] -= lr*dW0/batchSize
         weights[1] -= lr*dW1/batchSize
@@ -197,6 +199,8 @@ class cnn:
         biases[4] -= lr*dB4/batchSize
         # self.Weights -= lr*dWeights/batchSize
         # self.Biases -= lr*dBiases/batch
+        self.Weights = weights
+        self.Biases = biases
 
         return loss/batchSize
 
