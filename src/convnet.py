@@ -99,22 +99,22 @@ class cnn:
         biases = self.Biases
         poolParams = self.poolParams
 
-        dWeights = np.zeros(weights.shape)
-        dBiases = np.zeros(biases.shape)
-        # dW4 = np.zeros(weights[4].shape)
-        # dB4 = np.zeros(biases[4].shape)
+        # dWeights = np.zeros(weights.shape)
+        # dBiases = np.zeros(biases.shape)
+        dW4 = np.zeros(weights[4].shape)
+        dB4 = np.zeros(biases[4].shape)
 
-        # dW3 = np.zeros(weights[3].shape)
-        # dB3 = np.zeros(biases[3].shape)
+        dW3 = np.zeros(weights[3].shape)
+        dB3 = np.zeros(biases[3].shape)
 
-        # dW2 = np.zeros(weights[2].shape)
-        # dB2 = np.zeros(biases[2].shape)
+        dW2 = np.zeros(weights[2].shape)
+        dB2 = np.zeros(biases[2].shape)
 
-        # dW1 = np.zeros(weights[1].shape)
-        # dB1 = np.zeros(biases[1].shape)
+        dW1 = np.zeros(weights[1].shape)
+        dB1 = np.zeros(biases[1].shape)
 
-        # dW0 = np.zeros(weights[0].shape)
-        # dB0 = np.zeros(biases[0].shape)
+        dW0 = np.zeros(weights[0].shape)
+        dB0 = np.zeros(biases[0].shape)
 
         loss = 0
 
@@ -156,47 +156,47 @@ class cnn:
             dy = X_label - layer7
 
             [dy, dW, dB ] = fcback(layer6, np.asarray([dy]).transpose() , weights[4])
-            dWeights[4] += dW
-            dBiases[4] += dB.flatten()
+            dW4 += dW
+            dB4 += dB.flatten()
             dy = act.backActivate(dy.transpose(), layer6, activation)
 
             [dy, dW, dB ] = fcback(layer5[:,0], dy, weights[3])
-            dWeights[3] += dW
-            dBiases[3] += dB.flatten()
+            dW3 += dW
+            dB3 += dB.flatten()
             dy = act.backActivate(dy.transpose(), layer5[:,0], activation)
 
             [dy, dW, dB ] = convBack(layer4, dy, weights[2])
-            dWeights[2] += dW
-            dBiases[2] += dB.flatten()
+            dW2 += dW
+            dB2 += dB.flatten()
 
             dy = poolback(layer3, dy)
             dy = act.backActivate(dy, layer3, activation)
 
             [dy, dW, dB ] = convBack(layer2, dy, weights[1])
-            dWeights[1] += dW
-            dBiases[1] += dB.flatten()
+            dW1 += dW
+            dB1 += dB.flatten()
 
             dy = poolback(layer1, dy)
             dy = act.backActivate(dy, layer1, activation)
 
             [dy, dW, dB ] = convBack(np.asarray([layer0]), dy, weights[0])
-            dWeights[0] += dW
-            dBiases[0] += dB.flatten()
+            dW0 += dW
+            dB0 += dB.flatten()
 
         # Updates
-        # weights[0] -= lr*dW0/batchSize
-        # weights[1] -= lr*dW1/batchSize
-        # weights[2] -= lr*dW2/batchSize
-        # weights[3] -= lr*dW3/batchSize
-        # weights[4] -= lr*dW4/batchSize
+        weights[0] -= lr*dW0/batchSize
+        weights[1] -= lr*dW1/batchSize
+        weights[2] -= lr*dW2/batchSize
+        weights[3] -= lr*dW3/batchSize
+        weights[4] -= lr*dW4/batchSize
 
-        # biases[0] -= lr*dB0/batchSize
-        # biases[1] -= lr*dB1/batchSize
-        # biases[2] -= lr*dB2/batchSize
-        # biases[3] -= lr*dB3/batchSize
-        # biases[4] -= lr*dB4/batchSize
-        self.Weights -= lr*dWeights/batchSize
-        self.Biases -= lr*dBiases/batch
+        biases[0] -= lr*dB0/batchSize
+        biases[1] -= lr*dB1/batchSize
+        biases[2] -= lr*dB2/batchSize
+        biases[3] -= lr*dB3/batchSize
+        biases[4] -= lr*dB4/batchSize
+        # self.Weights -= lr*dWeights/batchSize
+        # self.Biases -= lr*dBiases/batch
 
         return loss/batchSize
 
