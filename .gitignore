@@ -1,5 +1,5 @@
 *.pyc
 .ipynb_checkpoints
-/*data/**/
+data/mnist_2D.mat
 src/*pyc
 /*debug.ipynb*/
