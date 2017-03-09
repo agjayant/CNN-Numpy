@@ -23,28 +23,33 @@ lr = config.lr
 class cnn:
     def __init__(self):
 
-        self.Weights = [np.random.uniform(minW,maxW,size=(layers[0][1],inp_channels,layers[0][2],layers[0][2]))]
+        n = inp_width*inp_height
+        self.Weights = [np.random.randn(layers[0][1],inp_channels,layers[0][2],layers[0][2])/np.sqrt(n)]
         out_Size =  inp_width - layers[0][2] + 1 ########### Only for Height = Width
         self.Biases = [initBias*np.ones( layers[0][1] )]
 
         self.poolParams = [(layers[1][1], layers[1][2])]
         out_Size = out_Size/2  ########## Only for Kernel = 2 and Stride = 2
 
-        self.Weights.append(np.random.uniform(minW,maxW,size=(layers[2][1],layers[0][1],layers[2][2],layers[2][2])))
+        n = out_Size*out_Size*layers[0][1]
+        self.Weights.append(np.random.randn(layers[2][1],layers[0][1],layers[2][2],layers[2][2])/np.sqrt(n))
         out_Size = out_Size - layers[2][2]+1
         self.Biases.append(initBias*np.ones(layers[2][1]))
 
         self.poolParams.append((layers[3][1],layers[3][2]))
         out_Size = out_Size/2  ########## Only for Kernel = 2 and Stride = 2
 
-        self.Weights.append(np.random.uniform(minW,maxW,size=(layers[4][1],layers[2][1],out_Size,out_Size)))
+        n = out_Size*out_Size*layers[2][1]
+        self.Weights.append(np.random.randn(layers[4][1],layers[2][1],out_Size,out_Size)/np.sqrt(n))
         out_Size = 1
         self.Biases.append(initBias*np.ones(layers[4][1]))
 
-        self.Weights.append(np.random.uniform(minW,maxW,size=(layers[5][1],layers[4][1])))
+        n = layers[4][1]
+        self.Weights.append(np.random.randn(layers[5][1],layers[4][1])/np.sqrt(n))
         self.Biases.append(initBias*np.ones(layers[5][1]))
 
-        self.Weights.append(np.random.uniform(minW,maxW,size=(layers[6][1],layers[5][1])))
+        n = layers[5][1]
+        self.Weights.append(np.random.randn(layers[6][1],layers[5][1])/np.sqrt(n))
         self.Biases.append(initBias*np.ones(layers[6][1]))
 
         self.Weights = np.asarray(self.Weights)
@@ -82,6 +87,10 @@ class cnn:
         layer7 -= np.max(layer7)
         layer7 = np.exp(layer7)/sum(np.exp(layer7))
         return layer7
+
+    def trloss(self, trainData, trainLabel):
+
+        return -1*sum( trainLabel * np.log(self.forward(trainData)) )
 
     def predict(self, inputVal):
 
@@ -153,7 +162,8 @@ class cnn:
             loss += -1*sum( X_label * np.log(layer7) )
 
             ### Gradients Accumulate
-            dy = X_label - layer7
+            dy = -1*(X_label - layer7)/2
+            # dy = (-1*X_label + layer7)/2
 
             [dy, dW, dB ] = fcback(layer6, np.asarray([dy]).transpose() , weights[4])
             dW4 += dW
@@ -183,8 +193,6 @@ class cnn:
             dW0 += dW
             dB0 += dB.flatten()
 
-        # print np.sum(dW0)
-        # print np.sum(dW1)
         # Updates
         weights[0] -= lr*dW0/batchSize
         weights[1] -= lr*dW1/batchSize
@@ -202,6 +210,7 @@ class cnn:
         self.Weights = weights
         self.Biases = biases
 
+        # return [loss/batchSize, dW4/batchSize]
         return loss/batchSize
 
 

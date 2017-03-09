@@ -49,7 +49,13 @@ for epoch in range(numEpoch):
         numIter += 1
         j += batchSize
 
-    print 'Epoch ', epoch, " : Accuracy:  ", "TO BE DONE"
+    ### Debugging: For Overfitting exercise
+    acc = 0
+    for i in range(trainExamples):
+        if trainLabel[i][net.predict(trainData[i])] == 1:
+            acc += 1
+
+    print 'Epoch ', epoch+1, " : Accuracy:  ", acc*100.0/trainExamples
 
 
 

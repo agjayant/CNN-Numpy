@@ -14,7 +14,7 @@ def conv(X, convFilters):
         depth = len(convFilter)
         assert(depth == len(X)), 'Dimension Mismatch'
         for j in range(depth):
-            featureMap.append(signal.convolve2d(X[j], convFilter[j],'valid'))
+            featureMap.append(signal.convolve2d(X[j], np.rot90(convFilter[j],2),'valid'))
 
         featureMaps.append( sum(featureMap) )
 
@@ -37,7 +37,7 @@ def convBack(X, dy, W):
     for i in range(W.shape[0]):
         kernel = []
         for j in range(W.shape[1]):
-            kernel.append( signal.convolve2d(X[j], dy[i],'valid') )
+            kernel.append( signal.convolve2d(X[j], np.rot90(dy[i],2) ,'valid') )
             Wb[j,i] = np.rot90(W[i,j],2)
         dW.append(np.asarray(kernel))
         dB.append(np.sum(dy[i]))

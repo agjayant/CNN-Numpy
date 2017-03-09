@@ -14,15 +14,13 @@ activation = 'relu'
 pool = 'max' # 'mean' or 'max'
 
 #Network Initialisation
-minW = -0.1
-maxW =  0.1       # Network weights are initialised in range [minW,maxW]
 initBias = 0.01   # Initial Bias Value for all layers
 
 ###########################
 ## Training Parameters   ##
 ###########################
 
-lr = 0.001
-numEpoch = 5
-batchSize = 5
-trainExamples = 20
+lr = 0.1
+numEpoch = 100
+batchSize = 2
+trainExamples = 10
