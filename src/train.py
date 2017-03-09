@@ -13,6 +13,7 @@ valExamples = config.valExamples
 batchSize = config.batchSize
 saveModel = config.saveModel
 modelFile = config.modelFile
+validate  = config.validate
 
 log = config.log
 trainlog = config.trainlog
@@ -100,7 +101,8 @@ for epoch in range(numEpoch):
 
         val_loss += loss
 
-    print 'Epoch ', epoch+1,"Validation Loss: ",val_loss/valExamples, ",Accuracy:  ", acc*100.0/valExamples
+    if validate:
+        print 'Epoch ', epoch+1,"Validation Loss: ",val_loss/valExamples, ",Accuracy:  ", acc*100.0/valExamples
     if log:
         vlog.write(str(epoch+1)+ '  '+ str(val_loss/valExamples)+'  '+ str(acc*100.0/valExamples)+ '\n')
 

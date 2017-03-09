@@ -24,9 +24,10 @@ initBias = 0.01   # Initial Bias Value for all layers
 
 alpha = 0.9 # Momentum
 lr = 0.01
-numEpoch = 4
+numEpoch = 1
 batchSize = 2
 trainExamples = 10
+validate = False
 valExamples = 10
 
 ###########################

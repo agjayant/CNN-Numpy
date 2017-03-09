@@ -178,7 +178,6 @@ class cnn:
 
             ### Gradients Accumulate
             dy = -1*(X_label - layer7)/2
-            # dy = (-1*X_label + layer7)/2
 
             [dy, dW, dB ] = fcback(layer6, np.asarray([dy]).transpose() , weights[4])
             dW4 += dW
@@ -238,8 +237,7 @@ class cnn:
 
         DirB[4] = alpha*DirB[4] - lr*dB4/batchSize
         biases[4] += DirB[4]
-        # self.Weights -= lr*dWeights/batchSize
-        # self.Biases -= lr*dBiases/batch
+
         self.Weights = weights
         self.Biases = biases
 
