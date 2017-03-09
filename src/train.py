@@ -14,12 +14,21 @@ batchSize = config.batchSize
 saveModel = config.saveModel
 modelFile = config.modelFile
 validate  = config.validate
+pretrain = config.pretrain
+trainedModel = config.trainedModel
 
 log = config.log
 trainlog = config.trainlog
 vallog = config.vallog
 
 net = cnn()
+
+if pretrain:
+    model = scio.loadmat(trainedModel)
+    net.Weights = np.asarray(model['weights'][0])
+    for i in range(5):
+        net.Biases[i] = model['biases'][0][i][0]
+
 mnist = scio.loadmat('../data/mnist_2D.mat')
 
 def signal_handler(signal, frame):

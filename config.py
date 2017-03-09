@@ -25,10 +25,12 @@ initBias = 0.01   # Initial Bias Value for all layers
 alpha = 0.9 # Momentum
 lr = 0.01
 numEpoch = 1
-batchSize = 2
-trainExamples = 10
-validate = False
-valExamples = 10
+batchSize = 1
+trainExamples = 1
+validate = True
+valExamples = 500
+pretrain = True
+trainedModel = "/home/jayant/CS698/assignment3/convnet/models/32_0.01_16000_model.mat"
 
 ###########################
 ## Save Models           ##
