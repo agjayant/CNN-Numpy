@@ -25,3 +25,4 @@ lr = 0.01
 numEpoch = 100
 batchSize = 2
 trainExamples = 10
+valExamples = 10

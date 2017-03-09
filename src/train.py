@@ -7,6 +7,7 @@ import config
 
 numEpoch = config.numEpoch
 trainExamples = config.trainExamples
+valExamples = config.valExamples
 batchSize = config.batchSize
 
 net = cnn()
@@ -15,13 +16,13 @@ mnist = scio.loadmat('../data/mnist_2D.mat')
 for epoch in range(numEpoch):
 
     trainList = [np.random.randint(0,60000) for i in range(trainExamples)]
-    # valList = [np.random.randint(0,10000) for i in range(valExamples)]
+    valList = [np.random.randint(0,10000) for i in range(valExamples)]
 
     trainLabel = np.asarray([[0 for i in range(10)] for j in range(trainExamples)])
     trainData = np.zeros(( trainExamples, mnist['X_train'][0].shape[0], mnist['X_train'][0].shape[1] ))
 
-    # valLabel = np.asarray([0 for i in range(valExamples)])
-    # valData = np.asarray([[0 for i in range(config.n_inputs)] for j in range(valExamples)])
+    valLabel = np.asarray([[0 for i in range(10)] for j in range(valExamples)])
+    valData = np.zeros(( valExamples, mnist['X_train'][0].shape[0], mnist['X_train'][0].shape[1] ))
 
     j=0
     for i in trainList:
@@ -29,11 +30,12 @@ for epoch in range(numEpoch):
         trainData[j] = mnist['X_train'][i]
         j += 1
 
-    # j=0
-    # for i in valList:
-        # valLabel[j] = mnist['Y_test'][i]
-        # valData[j] = mnist['X_test'][i]
-        # j += 1
+    j=0
+    for i in valList:
+        valLabel[j,mnist['Y_test'][i]] = 1
+        valData[j] = mnist['X_test'][i]
+        j += 1
+
 
     j = 0
     numIter = 1
@@ -50,12 +52,26 @@ for epoch in range(numEpoch):
         j += batchSize
 
     ### Debugging: For Overfitting exercise
+    # acc = 0
+    # for i in range(trainExamples):
+        # if trainLabel[i][net.predict(trainData[i])] == 1:
+            # acc += 1
+
+    # print 'Epoch ', epoch+1, " : Accuracy:  ", acc*100.0/trainExamples
+
+    ### Validation
     acc = 0
-    for i in range(trainExamples):
-        if trainLabel[i][net.predict(trainData[i])] == 1:
+    val_loss = 0
+    for i in range(valExamples):
+        [predict,loss] = net.validate(valData[i], valLabel[i])
+
+        if valLabel[i][predict] == 1:
             acc += 1
 
-    print 'Epoch ', epoch+1, " : Accuracy:  ", acc*100.0/trainExamples
+        val_loss += loss
+
+    print 'Epoch ', epoch+1,"Validation Loss: ",val_loss/valExamples, ",Accuracy:  ", acc*100.0/valExamples
+
 
 
 

@@ -92,6 +92,7 @@ class cnn:
         layer7 = np.dot( weights[4], layer6[:,0] ).transpose() + biases[4]
         layer7 -= np.max(layer7)
         layer7 = np.exp(layer7)/sum(np.exp(layer7))
+
         return layer7
 
     def trloss(self, trainData, trainLabel):
@@ -103,6 +104,12 @@ class cnn:
         outProb = self.forward(inputVal)
         return outProb.argmax()
 
+    def validate(self, inputVal, inputLabel):
+
+        outProb = self.forward(inputVal)
+        loss = -1*sum( inputLabel * np.log(outProb) )
+
+        return [outProb.argmax(),loss]
 
     def backward(self, trainData, trainLabel ):
 
