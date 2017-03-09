@@ -9,6 +9,8 @@ numEpoch = config.numEpoch
 trainExamples = config.trainExamples
 valExamples = config.valExamples
 batchSize = config.batchSize
+saveModel = config.saveModel
+modelFile = config.modelFile
 
 log = config.log
 trainlog = config.trainlog
@@ -88,6 +90,10 @@ if log:
     trlog.close()
     vlog.close()
 
-
+if saveModel:
+    model= {}
+    model['weights'] = net.Weights
+    model['biases'] = net.Biases
+    scio.savemat(modelFile, model)
 
 

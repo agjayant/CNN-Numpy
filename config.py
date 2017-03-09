@@ -36,3 +36,6 @@ logDirectory = "/home/jayant/CS698/assignment3/convnet/logs/"
 log = True
 trainlog = logDirectory+ str(batchSize) +"_"+ str(lr) + "_train.log"
 vallog =  logDirectory+str(batchSize) +"_"+ str(lr) + "_val.log"
+saveModel = True
+modelDirectory = "/home/jayant/CS698/assignment3/convnet/models/"
+modelFile = modelDirectory + str(batchSize) + '_'+ str(lr) + '_model.mat'
