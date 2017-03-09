@@ -20,7 +20,8 @@ initBias = 0.01   # Initial Bias Value for all layers
 ## Training Parameters   ##
 ###########################
 
-lr = 0.1
+alpha = 0.9 # Momentum
+lr = 0.01
 numEpoch = 100
 batchSize = 2
 trainExamples = 10

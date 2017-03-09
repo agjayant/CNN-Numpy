@@ -13,12 +13,10 @@ inp_channels = config.channels
 
 layers = config.layers
 
-minW = config.minW
-maxW = config.maxW
-
 initBias = config.initBias
 activation = config.activation
 lr = config.lr
+alpha = config.alpha
 
 class cnn:
     def __init__(self):
@@ -54,6 +52,14 @@ class cnn:
 
         self.Weights = np.asarray(self.Weights)
         self.Biases = np.asarray(self.Biases)
+
+        DirW = []
+        DirB = []
+        for i in range(5):
+            DirW.append(np.zeros(self.Weights[i].shape))
+            DirB.append(np.zeros(self.Biases[i].shape))
+        self.DirW = np.asarray(DirW)
+        self.DirB = np.asarray(DirB)
 
     def forward(self, inputData):
 
@@ -106,6 +112,8 @@ class cnn:
 
         weights = self.Weights
         biases = self.Biases
+        DirW = self.DirW
+        DirB = self.DirB
         poolParams = self.poolParams
 
         # dWeights = np.zeros(weights.shape)
@@ -194,17 +202,35 @@ class cnn:
             dB0 += dB.flatten()
 
         # Updates
-        weights[0] -= lr*dW0/batchSize
-        weights[1] -= lr*dW1/batchSize
-        weights[2] -= lr*dW2/batchSize
-        weights[3] -= lr*dW3/batchSize
-        weights[4] -= lr*dW4/batchSize
+        DirW[0] = alpha*DirW[0] - lr*dW0/batchSize
+        weights[0] += DirW[0]
 
-        biases[0] -= lr*dB0/batchSize
-        biases[1] -= lr*dB1/batchSize
-        biases[2] -= lr*dB2/batchSize
-        biases[3] -= lr*dB3/batchSize
-        biases[4] -= lr*dB4/batchSize
+        DirW[1] = alpha*DirW[1] - lr*dW1/batchSize
+        weights[1] += DirW[1]
+
+        DirW[2] = alpha*DirW[2] - lr*dW2/batchSize
+        weights[2] += DirW[2]
+
+        DirW[3] = alpha*DirW[3] - lr*dW3/batchSize
+        weights[3] += DirW[3]
+
+        DirW[4] = alpha*DirW[4] - lr*dW4/batchSize
+        weights[4] += DirW[4]
+
+        DirB[0] = alpha*DirB[0] - lr*dB0/batchSize
+        biases[0] += DirB[0]
+
+        DirB[1] = alpha*DirB[1] - lr*dB1/batchSize
+        biases[1] += DirB[1]
+
+        DirB[2] = alpha*DirB[2] - lr*dB2/batchSize
+        biases[2] += DirB[2]
+
+        DirB[3] = alpha*DirB[3] - lr*dB3/batchSize
+        biases[3] += DirB[3]
+
+        DirB[4] = alpha*DirB[4] - lr*dB4/batchSize
+        biases[4] += DirB[4]
         # self.Weights -= lr*dWeights/batchSize
         # self.Biases -= lr*dBiases/batch
         self.Weights = weights
