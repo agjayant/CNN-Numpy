@@ -1,3 +1,5 @@
+import sys
+sys.path.append('../')
 ############################
 ## Network Parameters     ##
 ############################
@@ -22,7 +24,15 @@ initBias = 0.01   # Initial Bias Value for all layers
 
 alpha = 0.9 # Momentum
 lr = 0.01
-numEpoch = 100
+numEpoch = 4
 batchSize = 2
 trainExamples = 10
 valExamples = 10
+
+###########################
+## Save Models           ##
+###########################
+logDirectory = "/home/jayant/CS698/assignment3/convnet/logs/"
+log = True
+trainlog = logDirectory+ str(batchSize) +"_"+ str(lr) + "_train.log"
+vallog =  logDirectory+str(batchSize) +"_"+ str(lr) + "_val.log"

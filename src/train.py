@@ -10,9 +10,17 @@ trainExamples = config.trainExamples
 valExamples = config.valExamples
 batchSize = config.batchSize
 
+log = config.log
+trainlog = config.trainlog
+vallog = config.vallog
+
 net = cnn()
 mnist = scio.loadmat('../data/mnist_2D.mat')
 
+if log:
+    trlog = open( trainlog , 'w')
+    vlog = open( vallog, 'w')
+numIter = 1
 for epoch in range(numEpoch):
 
     trainList = [np.random.randint(0,60000) for i in range(trainExamples)]
@@ -38,7 +46,6 @@ for epoch in range(numEpoch):
 
 
     j = 0
-    numIter = 1
     while( j < trainExamples ):
 
         batchData = trainData[j:j+batchSize]
@@ -46,7 +53,10 @@ for epoch in range(numEpoch):
 
         batchLoss = net.backward(batchData, batchLabel)
 
-        print 'Iteration ', numIter,': Train Loss =  ', batchLoss
+        print 'Iteration ',numIter, ': Train Loss =  ' ,batchLoss
+
+        if log:
+            trlog.write(str(numIter) + ' ' + str(batchLoss) + '\n')
 
         numIter += 1
         j += batchSize
@@ -71,6 +81,12 @@ for epoch in range(numEpoch):
         val_loss += loss
 
     print 'Epoch ', epoch+1,"Validation Loss: ",val_loss/valExamples, ",Accuracy:  ", acc*100.0/valExamples
+    if log:
+        vlog.write(str(epoch+1)+ '  '+ str(val_loss/valExamples)+'  '+ str(acc*100.0/valExamples)+ '\n')
+
+if log:
+    trlog.close()
+    vlog.close()
 
 
 
