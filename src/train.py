@@ -4,6 +4,8 @@ import sys
 sys.path.append('../')
 from convnet import cnn
 import config
+import signal
+import sys
 
 numEpoch = config.numEpoch
 trainExamples = config.trainExamples
@@ -18,6 +20,22 @@ vallog = config.vallog
 
 net = cnn()
 mnist = scio.loadmat('../data/mnist_2D.mat')
+
+def signal_handler(signal, frame):
+            print('You pressed Ctrl+C!')
+            if saveModel:
+                SaveModel()
+                print "Model Saved"
+            sys.exit(0)
+
+signal.signal(signal.SIGINT, signal_handler)
+
+def SaveModel():
+    if saveModel:
+        model= {}
+        model['weights'] = net.Weights
+        model['biases'] = net.Biases
+        scio.savemat(modelFile, model)
 
 if log:
     trlog = open( trainlog , 'w')
@@ -90,10 +108,4 @@ if log:
     trlog.close()
     vlog.close()
 
-if saveModel:
-    model= {}
-    model['weights'] = net.Weights
-    model['biases'] = net.Biases
-    scio.savemat(modelFile, model)
-
-
+SaveModel()
