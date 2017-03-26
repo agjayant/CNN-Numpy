@@ -1,35 +1,35 @@
-#LeNet-5 for Digit Classification(mnist)
+# LeNet-5 for Digit Classification(mnist)
 Assignment 3 for CS698: Topics in Computer Vision
 Using Only Numpy and Scipy
 
-#Data Setup
+# Data Setup
 ```
 cd data/ && python make2D.py 
 ```
 
-#Configuration
+# Configuration
 All the config(network, training, logging) parameters: config.py
 
-#Training
+# Training
 ```
 cd src/ && python train.py
 ```
 
-#Source Files
+# Source Files
 
-##src/convnet.py
+## src/convnet.py
 Contains the Structure of LeNet-5 along with forward pass, backward pass
 
-##src/fwd.py
+## src/fwd.py
 Forward Pass Functions
 
-##src/back.py
+## src/back.py
 Backward Pass Functions
 
-##src/activations.py
+## src/activations.py
 Activation Functions
 
-##src/train.py
+## src/train.py
 Driver Training Script
 
 ### Supporting scripts in _scripts/_
